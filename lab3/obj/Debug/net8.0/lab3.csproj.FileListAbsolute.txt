@@ -1,0 +1,15 @@
+D:\projects\c#_project\lab3\lab3\bin\Debug\net8.0\lab3.exe
+D:\projects\c#_project\lab3\lab3\bin\Debug\net8.0\lab3.deps.json
+D:\projects\c#_project\lab3\lab3\bin\Debug\net8.0\lab3.runtimeconfig.json
+D:\projects\c#_project\lab3\lab3\bin\Debug\net8.0\lab3.dll
+D:\projects\c#_project\lab3\lab3\bin\Debug\net8.0\lab3.pdb
+D:\projects\c#_project\lab3\lab3\obj\Debug\net8.0\lab3.GeneratedMSBuildEditorConfig.editorconfig
+D:\projects\c#_project\lab3\lab3\obj\Debug\net8.0\lab3.AssemblyInfoInputs.cache
+D:\projects\c#_project\lab3\lab3\obj\Debug\net8.0\lab3.AssemblyInfo.cs
+D:\projects\c#_project\lab3\lab3\obj\Debug\net8.0\lab3.csproj.CoreCompileInputs.cache
+D:\projects\c#_project\lab3\lab3\obj\Debug\net8.0\lab3.sourcelink.json
+D:\projects\c#_project\lab3\lab3\obj\Debug\net8.0\lab3.dll
+D:\projects\c#_project\lab3\lab3\obj\Debug\net8.0\refint\lab3.dll
+D:\projects\c#_project\lab3\lab3\obj\Debug\net8.0\lab3.pdb
+D:\projects\c#_project\lab3\lab3\obj\Debug\net8.0\lab3.genruntimeconfig.cache
+D:\projects\c#_project\lab3\lab3\obj\Debug\net8.0\ref\lab3.dll
