@@ -501,7 +501,7 @@ public struct SplineDataItem
 
     public string ToString(string format)
     {
-        return $"({X.ToString(format)}, {Y.ToString(format)}) -> {ApproximatedValue.ToString(format)}";
+        return $"({X.ToString(format)}, {Y.ToString(format)}) -> {ApproximatedValue.ToString(format)} \n";
     }
 }
 
@@ -514,6 +514,7 @@ class SplineData
     public int MaximumNumberOfIterations { get; set; }
     public int StoppingReason { get; set; }
     public double MinimumNonZeros { get; set; }
+    public int IterationNumber = 0;
     public List<SplineDataItem> Results { get; set; } 
 
     public SplineData(V2DataArray dataArray, int numberOfMeshNodes, int maximumNumberOfIterations)
@@ -531,52 +532,57 @@ class SplineData
         double[] sites = { DataArray.X[0], DataArray.X[DataArray.X.Length - 1] };
         int[] dorder = { 1 };
         double[] result = new double[NumberOfMeshNodes];
+        double[] approximation = new double[DataArray.X.Length];
+        int stopCriteria = 0;
+        double resFinal = 0;
+        int ndoneIter = 0;
         int ret = 0;
         double[] scoeff = new double[4 * (DataArray.X.Length - 1)];
+        
+
+        approximation[0] = 5;
+        approximation[1] = 5;
 
         for (int i = 0; i < Y.Length; i++)
         {
             Y[i] = DataArray.Y[i, 0];
         }
 
-        SplineInterpolation(DataArray.X.Length, DataArray.X.Length, X, Y, scoeff, NumberOfMeshNodes, sites, 1, dorder, result, ref ret);
+        SplineInterpolation(DataArray.X.Length, DataArray.X.Length, X, Y, scoeff, NumberOfMeshNodes, sites, 1, dorder, approximation, MaximumNumberOfIterations, MaximumNumberOfIterations, ref stopCriteria, ref resFinal, ref ndoneIter, 10, result, ref ret);
 
         if (ret == -1)
         {
             return;
         }
 
-        Console.WriteLine("Results:");
-
-        double rsn = 0;
+        StoppingReason = stopCriteria;
+        MinimumNonZeros = resFinal;
+        IterationNumber = ndoneIter;
 
         for (int i = 0; i < NumberOfMeshNodes; i++)
         {
             double site = X[0] + (i) * ((X[1] - X[0]) / (NumberOfMeshNodes - 1));
             double y = site * site;
             Results.Add(new SplineDataItem(site, y, result[i]));
-            Console.WriteLine($"{site}:\t{y} | {result[i]}");
         }
-
-        Console.WriteLine($"rsn: {rsn}");
     }
 
     public string ToLongString(string format)
     {
-        StringBuilder result = new StringBuilder();
-        result.AppendLine(DataArray.ToLongString(format));
+        String result = "";
+        result += (DataArray.ToLongString(format)) + "\n";
+        result += "Interpolation:\n";
+
         foreach (var resultItem in Results)
         {
-            result.AppendLine(resultItem.ToString("f5"));
+            result += (resultItem.ToString(format));
         }
-        /*
-        result.AppendLine($"Number of mesh nodes: {NumberOfMeshNodes}");
-        result.AppendLine($"Minimum non-zero value: {MinimumNonZeros}");
-        result.AppendLine($"Stopping reason: {StoppingReason}");
-        result.AppendLine($"Number of iterations: {MaximumNumberOfIterations}");
-        result.AppendLine("Spline data:");
-        */
-        return result.ToString();
+        result += "\n";
+        result += $"Minimum non-zero value: {MinimumNonZeros}\n";
+        result += $"Stopping reason: {StoppingReason}\n";
+        result += $"Number of iterations: {IterationNumber}\n";
+        Console.WriteLine(result);
+        return result;
     }
 
     public void Save(string filename, string format)
@@ -588,7 +594,7 @@ class SplineData
     }
 
     [DllImport("..\\..\\..\\..\\x64\\Debug\\dll3.dll", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void SplineInterpolation(int nx, int ny, double[] x, double[] y, double[] scoeff, int nsite, double[] site, int ndorder, int[] dorder, double[] result, ref int ret);
+    public static extern void SplineInterpolation(int nx, int ny, double[] x, double[] y, double[] scoeff, int nsite, double[] site, int ndorder, int[] dorder, double[] approximation, int maxiter, int maxiter_step, ref int stopCriteria, ref double resFinal, ref int ndoneIter, double rs, double[] result, ref int ret);
 }
 
 
@@ -596,10 +602,10 @@ class Program
 {
     static void Main(string[] args)
     {
-        V2DataArray dataArray = new V2DataArray("DataArray", DateTime.Now, 10, 0, 100, (x, index) => x * x);
+        V2DataArray dataArray = new V2DataArray("DataArray", DateTime.Now, [0, 1, 2, 3], (x, index) => x * x);
         Console.WriteLine(dataArray.ToLongString("f2"));
-        SplineData splineData = new SplineData(dataArray, 6, 100);
+        SplineData splineData = new SplineData(dataArray, 7, 100);
         splineData.ApproximateSpline();
-        splineData.Save("spline_data.txt", "f5");
+        splineData.Save("spline_data.txt", "f2");
     }
 }

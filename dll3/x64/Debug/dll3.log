@@ -1,2 +1,7 @@
-﻿  INTRP_MKL.cpp
+﻿  pch.cpp
+  dllmain.cpp
+  INTRP_MKL.cpp
+D:\projects\c(11,6): warning C4101: status: неиспользованная локальная переменная
+  Создание кода...
+     Создается библиотека D:\projects\c#_project\lab3\x64\Debug\dll3.lib и объект D:\projects\c#_project\lab3\x64\Debug\dll3.exp
   dll3.vcxproj -> D:\projects\c#_project\lab3\x64\Debug\dll3.dll
