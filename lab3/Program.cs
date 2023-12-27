@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -548,7 +548,7 @@ class SplineData
             Y[i] = DataArray.Y[i, 0];
         }
 
-        SplineInterpolation(DataArray.X.Length, DataArray.X.Length, X, Y, scoeff, NumberOfMeshNodes, sites, 1, dorder, approximation, MaximumNumberOfIterations, MaximumNumberOfIterations, ref stopCriteria, ref resFinal, ref ndoneIter, 10, result, ref ret);
+        SplineInterpolation(DataArray.X.Length, DataArray.X.Length, X, Y, scoeff, NumberOfMeshNodes, sites, 1, dorder, approximation, MaximumNumberOfIterations, MaximumNumberOfIterations / 10, ref stopCriteria, ref resFinal, ref ndoneIter, 10, result, ref ret);
 
         if (ret == -1)
         {
@@ -587,9 +587,20 @@ class SplineData
 
     public void Save(string filename, string format)
     {
-        using (StreamWriter writer = new StreamWriter(filename))
+        StreamWriter writer = new StreamWriter(File.Open(filename, FileMode.Create));
+
+        try
         {
             writer.Write(ToLongString(format));
+            Console.WriteLine($"Success saving data to file '{filename}'");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving data to file '{filename}': {ex.Message}");
+        }
+        finally
+        {
+            writer.Close();
         }
     }
 
@@ -602,10 +613,11 @@ class Program
 {
     static void Main(string[] args)
     {
-        V2DataArray dataArray = new V2DataArray("DataArray", DateTime.Now, [0, 1, 2, 3], (x, index) => x * x);
+        V2DataArray dataArray = new V2DataArray("DataArray", DateTime.Now, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], (x, index) => x * x);
         Console.WriteLine(dataArray.ToLongString("f2"));
-        SplineData splineData = new SplineData(dataArray, 7, 100);
+        SplineData splineData = new SplineData(dataArray, 8, 100);
         splineData.ApproximateSpline();
+        Console.WriteLine(splineData.ToLongString("f2"));
         splineData.Save("spline_data.txt", "f2");
     }
 }
